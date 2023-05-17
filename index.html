@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Circular Slider</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+
+<body>
+    <p>Circular slider</p>
+    <svg id="circular-slider" width="220" height="220">
+        <!-- Base circle -->
+        <circle cx="110" cy="110" r="80" stroke="grey" stroke-width="20" fill="transparent" />
+
+        <!-- Progress circle -->
+        <path id="progress" d="" stroke="magenta" stroke-width="20" fill="transparent" />
+        <g id="steps" stroke="white" stroke-width="1">
+        </g>
+    </svg>
+    <script src="slider.js"></script>
+</body>
+
+</html>
