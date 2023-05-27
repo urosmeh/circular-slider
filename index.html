@@ -11,14 +11,51 @@
 <body>
     <p>Circular slider</p>
     <p>Value: <span id="val"></span> </p>
-    <svg id="circular-slider" width="220" height="220">
+    <!-- <svg id="circular-slider" width="220" height="220">
         <circle cx="110" cy="110" r="80" stroke="lightGrey" stroke-width="20" fill="transparent" />
         <path id="progress" d="" stroke="magenta" stroke-width="20" fill="transparent" />
         <g id="steps" stroke="white" stroke-width="1">
         </g>
         <circle id="handle" cx="110" cy="30" r="13" fill="white" stroke="lightGrey" stroke-width="1" />
-    </svg>
+    </svg> -->
+
+    <div id="container"></div>
+
+    <!-- <script src="slider.js"></script> -->
+    <script src="mySlider.js"></script>
+    <script>
+        const slider = new CircularSlider({ container: "container", color: "red", max: 100, min: 0, step: 10, radius: 80 });
+        slider.render();
+        slider.attachEventListeners();
+    </script>
+    <!-- <svg id="circular-slider-1" width="220" height="220"></svg>
+    <svg id="circular-slider-2" width="220" height="220"></svg>
+
+    <p>Value1: <span id="val1"></span> </p>
+    <p>Value2: <span id="val2"></span> </p>
+    <svg id="container" width="300" height="300"></svg>
+
+
     <script src="slider.js"></script>
+    <script>
+        const slider1 = new CircularSlider({
+            container: 'container',
+            color: 'magenta',
+            minValue: 0,
+            maxValue: 1000,
+            step: 50,
+            radius: 100
+        });
+
+        const slider2 = new CircularSlider({
+            container: 'container',
+            color: 'cyan',
+            minValue: 0,
+            maxValue: 1000,
+            step: 50,
+            radius: 60
+        });
+    </script> -->
 </body>
 
 </html>
