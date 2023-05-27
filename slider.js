@@ -3,14 +3,20 @@ const progress = document.getElementById('progress');
 const radius = 80;
 const circumference = 2 * Math.PI * radius; //obseg
 const stepsContainer = document.getElementById('steps');
-createSteps(100);
+const handle = document.getElementById('handle');
+let startAngle = - Math.PI / 2;
+let rangeMin = 0;
+let rangeMax = 1000;
+let steps = 50
+let stepValue = (rangeMax - rangeMin) / steps;
+createSteps(50);
 
 let isMouseDown = false;
 
 function createSteps(stepCount) {
     for (let i = 0; i < stepCount; i++) {
         const radian = (i * 2 * Math.PI) / stepCount - Math.PI / 2;
-        const innerX = 110 + Math.cos(radian) * (radius - 10); // Adjust 10 for the length of the step
+        const innerX = 110 + Math.cos(radian) * (radius - 10);
         const innerY = 110 + Math.sin(radian) * (radius - 10);
         const outerX = 110 + Math.cos(radian) * (radius + 10);
         const outerY = 110 + Math.sin(radian) * (radius + 10);
@@ -27,9 +33,10 @@ function createSteps(stepCount) {
 
 
 function updateProgress(e) {
+    e.preventDefault()
     const rect = svg.getBoundingClientRect();
-    const x = e.clientX - rect.left - 110; // Subtract the adjusted center x-coordinate
-    const y = e.clientY - rect.top - 110; // Subtract the adjusted center y-coordinate
+    const x = e.clientX - rect.left - 110;
+    const y = e.clientY - rect.top - 110;
     const radian = Math.atan2(y, x);
     const endX = 110 + Math.cos(radian) * radius;
     const endY = 110 + Math.sin(radian) * radius;
@@ -42,12 +49,24 @@ function updateProgress(e) {
         largeArcFlag = 1;
     }
 
-    console.log(radian, degree);
     const pathData = `
       M 110 ${110 - radius}
       A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY}
     `;
     progress.setAttribute('d', pathData);
+
+    handle.setAttribute('cx', endX);
+    handle.setAttribute('cy', endY);
+
+    const currentAngle = Math.atan2(y, x);
+    let deltaAngle = currentAngle - startAngle;
+
+    if (deltaAngle < 0) {
+        deltaAngle += 2 * Math.PI;
+    }
+
+    const currentValue = rangeMin + deltaAngle / (2 * Math.PI) * (rangeMax - rangeMin);
+    document.getElementById("val").innerHTML = Math.round(currentValue / stepValue) * stepValue;
 }
 
 
@@ -67,5 +86,22 @@ svg.addEventListener('mouseup', (e) => {
 });
 
 svg.addEventListener('mouseleave', (e) => {
+    isMouseDown = false;
+});
+
+svg.addEventListener('touchstart', (e) => {
+    isMouseDown = true;
+    e.preventDefault(); // prevent scrolling when inside the svg
+    updateProgress(e.touches[0]);
+});
+
+svg.addEventListener('touchmove', (e) => {
+    if (isMouseDown) {
+        e.preventDefault();
+        updateProgress(e.touches[0]);
+    }
+});
+
+svg.addEventListener('touchend', (e) => {
     isMouseDown = false;
 });
