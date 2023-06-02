@@ -9,16 +9,23 @@
 </head>
 
 <body>
-    <p>Circular slider</p>
-    <p>Value: <span id="val"></span> </p>
-    <svg id="circular-slider" width="220" height="220">
-        <circle cx="110" cy="110" r="80" stroke="lightGrey" stroke-width="20" fill="transparent" />
-        <path id="progress" d="" stroke="magenta" stroke-width="20" fill="transparent" />
-        <g id="steps" stroke="white" stroke-width="1">
-        </g>
-        <circle id="handle" cx="110" cy="30" r="13" fill="white" stroke="lightGrey" stroke-width="1" />
-    </svg>
-    <script src="slider.js"></script>
+<p>Circular slider</p>
+<div id="container" style="width: 600px; height: 600px;"></div>
+
+<script src="mySlider.js"></script>
+<script>
+    const slider = new CircularSlider({container: "container", color: "red", max: 100, min: 0, step: 10, radius: 80});
+    const slider1 = new CircularSlider({
+        container: "container",
+        color: "red",
+        max: 600,
+        min: 200,
+        step: 20,
+        radius: 40
+    });
+    slider.render();
+    slider1.render();
+</script>
 </body>
 
 </html>
