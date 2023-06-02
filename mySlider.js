@@ -98,7 +98,7 @@ class CircularSlider {
     attachEventListeners() {
         this.parentSvg.addEventListener('mousedown', (e) => {
             console.log('mousedown', e.target.id);
-            if (e.target.id === `handle-${this.elementId}` || e.target.id === `outer-circle-${this.elementId}` || e.target.id === `progress-${this.elementId}`) {
+            if (e.target.id === `handle-${this.elementId}` || e.target.id === `outer-circle-${this.elementId}` || e.target.id === `progress-${this.elementId}` || e.target.id === `steps-${this.elementId}`) {
                 this.isMouseDown = true;
                 this.startAngle = this.calculateAngle(e);
                 this.updateProgress(e);
@@ -119,6 +119,30 @@ class CircularSlider {
             this.isMouseDown = false;
         });
 
+        this.parentSvg.addEventListener('touchstart', e => {
+            console.log('touchstart', e);
+
+            if (e.target.id === `handle-${this.elementId}` || e.target.id === `outer-circle-${this.elementId}` || e.target.id === `progress-${this.elementId}` || e.target.id === `steps-${this.elementId}`) {
+                this.isMouseDown = true;
+                this.startAngle = this.calculateAngle(e);
+                this.updateProgress(e, true);
+            }
+        });
+
+        this.parentSvg.addEventListener('touchmove', (e) => {
+            console.log('touchmove', e.target.id);
+
+            if (this.isMouseDown) {
+                this.updateProgress(e, true);
+            }
+        });
+
+        this.parentSvg.addEventListener('touchend', (e) => {
+            console.log('touchleave', e.target.id);
+
+            this.isMouseDown = false;
+        });
+
         // todo: Add touch events etc.....
     }
 
@@ -129,8 +153,9 @@ class CircularSlider {
         return Math.atan2(y, x);
     }
 
-    updateProgress(e) {
+    updateProgress(e, isMobile = false) {
         e.preventDefault()
+        e = isMobile ? e.changedTouches[0] : e;
 
         //optimize
         const rect = this.container.getBoundingClientRect();
