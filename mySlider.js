@@ -142,8 +142,6 @@ class CircularSlider {
 
             this.isMouseDown = false;
         });
-
-        // todo: Add touch events etc.....
     }
 
     calculateAngle(e) {
