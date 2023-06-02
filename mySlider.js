@@ -89,6 +89,7 @@ class CircularSlider {
             step.setAttribute('y1', innerY);
             step.setAttribute('x2', outerX);
             step.setAttribute('y2', outerY);
+            step.setAttribute('class', `line-${this.elementId}`);
 
             const stepsGroup = document.getElementById(`steps-${this.elementId}`)
             stepsGroup.appendChild(step);
@@ -97,8 +98,7 @@ class CircularSlider {
 
     attachEventListeners() {
         this.parentSvg.addEventListener('mousedown', (e) => {
-            console.log('mousedown', e.target.id);
-            if (e.target.id === `handle-${this.elementId}` || e.target.id === `outer-circle-${this.elementId}` || e.target.id === `progress-${this.elementId}` || e.target.id === `steps-${this.elementId}`) {
+            if (this.isEventOnSliderElement(e)) {
                 this.isMouseDown = true;
                 this.startAngle = this.calculateAngle(e);
                 this.updateProgress(e);
@@ -120,9 +120,7 @@ class CircularSlider {
         });
 
         this.parentSvg.addEventListener('touchstart', e => {
-            console.log('touchstart', e);
-
-            if (e.target.id === `handle-${this.elementId}` || e.target.id === `outer-circle-${this.elementId}` || e.target.id === `progress-${this.elementId}` || e.target.id === `steps-${this.elementId}`) {
+            if (this.isEventOnSliderElement(e)) {
                 this.isMouseDown = true;
                 this.startAngle = this.calculateAngle(e);
                 this.updateProgress(e, true);
@@ -130,16 +128,12 @@ class CircularSlider {
         });
 
         this.parentSvg.addEventListener('touchmove', (e) => {
-            console.log('touchmove', e.target.id);
-
             if (this.isMouseDown) {
                 this.updateProgress(e, true);
             }
         });
 
         this.parentSvg.addEventListener('touchend', (e) => {
-            console.log('touchleave', e.target.id);
-
             this.isMouseDown = false;
         });
     }
@@ -198,4 +192,9 @@ class CircularSlider {
         this.value = Math.round(val / this.step) * this.step;
         console.log(this.value);
     }
+
+    isEventOnSliderElement(e) {
+        return e.target.id === `handle-${this.elementId}` || e.target.id === `outer-circle-${this.elementId}` || e.target.id === `progress-${this.elementId}` || e.target.classList.contains(`line-${this.elementId}`);
+    }
+
 }
