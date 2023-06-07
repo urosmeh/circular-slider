@@ -23,7 +23,7 @@
             step: 10,
             radius: 200,
             title: "Food"
-        });
+        }).render();
 
         const slider2 = new CircularSlider({
             container: "container",
@@ -33,7 +33,7 @@
             step: 10,
             radius: 160,
             title: "Car"
-        });
+        }).render();
 
         const slider3 = new CircularSlider({
             container: "container",
@@ -43,7 +43,7 @@
             step: 20,
             radius: 120,
             title: "Loans",
-        });
+        }).render();
 
         const slider4 = new CircularSlider({
             container: "container",
@@ -53,7 +53,8 @@
             step: 20,
             radius: 80,
             title: "Insurance",
-        });
+            nOfSteps: 10,
+        }).render();
 
         const slider5 = new CircularSlider({
             container: "container",
@@ -63,13 +64,7 @@
             step: 20,
             radius: 40,
             title: "Goods",
-        });
-
-        slider2.render();
-        slider3.render();
-        slider1.render();
-        slider4.render();
-        slider5.render();
+        }).render();
     </script>
 </body>
 
