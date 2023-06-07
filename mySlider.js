@@ -1,5 +1,5 @@
 class CircularSlider {
-    constructor({ container, color, max, min, step, radius, title }) {
+    constructor({ container, color, max, min, step, radius, title, strokeWidth = 20, nOfSteps = 50 }) {
         this.container = document.getElementById(container);
         this.color = color;
         this.max = max;
@@ -8,16 +8,21 @@ class CircularSlider {
         this.value = min;
         this.radius = radius;
         this.title = title;
+        this.strokeWidth = strokeWidth;
+        this.nOfSteps = nOfSteps;
         this.elementId = Math.round(Math.random() * 1000);
         this.parentSvg = this.container.querySelector('.parent-svg');
         this.valuesSvg = this.container.querySelector('.values-svg');
 
         const rect = this.container.getBoundingClientRect();
         if (!this.parentSvg) {
-            this.parentSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            this.parentSvg.setAttribute('class', 'parent-svg')
-            this.parentSvg.setAttribute('width', rect.width);
-            this.parentSvg.setAttribute('height', rect.height);
+            this.parentSvg = this.createSvgElement('svg', {
+                class: 'parent-svg',
+                width: rect.width,
+                height: rect.height,
+            });
+            this.parentSvg.style.userSelect = 'none';
+
             this.container.appendChild(this.parentSvg);
         }
 
@@ -33,70 +38,79 @@ class CircularSlider {
 
     renderElements() {
         const existingValueElements = this.parentSvg.querySelectorAll('.value-text');
-        const elementDy = existingValueElements.length * 30 + this.cy;
+        // const elementDy = existingValueElements.length * 30 + this.cy;
+        const elementDy = this.radius;
 
-        const valueGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        valueGroup.setAttribute('class', 'value-text');
+        // value group contains values, colors and name of sliders
+        const valueGroup = this.createSvgElement('g', { class: 'value-text' });
 
-        const valueElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        valueElement.setAttribute('dy', elementDy.toString())
-        valueElement.setAttribute('id', `value-${this.elementId}`);
-        valueElement.style.fontSize = '30px';
+        const valueElement = this.createSvgElement('text', {
+            dy: elementDy,
+            id: `value-${this.elementId}`,
+        });
+
+        valueElement.style.fontSize = '20px';
         valueElement.textContent = this.value;
         valueGroup.appendChild(valueElement);
 
-        const valueLegendBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        valueLegendBox.setAttribute('width', '25');
-        valueLegendBox.setAttribute('height', '10');
-        valueLegendBox.setAttribute('fill', this.color);
-        valueLegendBox.setAttribute('transform', `translate(50, ${elementDy - 10})`);
+        const valueLegendBox = this.createSvgElement('rect', {
+            width: 25,
+            height: 10,
+            fill: this.color,
+            transform: `translate(50, ${elementDy - 10})`,
+        });
+
         valueGroup.appendChild(valueLegendBox);
 
-        const valueTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        valueTitle.setAttribute('dy', elementDy);
-        valueTitle.setAttribute('dx', '80');
-        valueTitle.setAttribute('id', `value-title-${this.elementId}`);
+        const valueTitle = this.createSvgElement('text', {
+            dy: elementDy,
+            dx: 80,
+            id: `value-title-${this.elementId}`,
+        });
+
         valueTitle.style.fontSize = '20px';
         valueTitle.textContent = this.title;
         valueGroup.appendChild(valueTitle);
 
         this.parentSvg.appendChild(valueGroup);
 
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        svg.setAttribute('class', 'svg-container');
+        const svg = this.createSvgElement('g', { class: 'svg-container' });
 
-        const outerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        outerCircle.setAttribute('id', `outer-circle-${this.elementId}`)
-        outerCircle.setAttribute('class', 'outer-circle')
-        outerCircle.setAttribute('cx', this.cx);
-        outerCircle.setAttribute('cy', this.cy);
-        outerCircle.setAttribute('r', this.radius);
-        outerCircle.setAttribute('stroke', 'lightGrey');
-        outerCircle.setAttribute('stroke-width', '20');
-        outerCircle.setAttribute('fill', 'transparent');
+        const outerCircle = this.createSvgElement('circle', {
+            id: `outer-circle-${this.elementId}`,
+            class: 'outer-circle',
+            cx: this.cx,
+            cy: this.cy,
+            r: this.radius,
+            stroke: 'lightGrey',
+            'stroke-width': this.strokeWidth,
+            fill: 'transparent',
+        });
 
-        const progressPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        progressPath.setAttribute('id', `progress-${this.elementId}`);
-        progressPath.setAttribute('d', '');
-        progressPath.setAttribute('stroke', this.color);
-        progressPath.setAttribute('stroke-width', '20');
-        progressPath.setAttribute('fill', 'transparent');
+        const progressPath = this.createSvgElement('path', {
+            id: `progress-${this.elementId}`,
+            stroke: this.color,
+            'stroke-width': this.strokeWidth,
+            fill: 'transparent',
+        });
 
-        const stepsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        stepsGroup.setAttribute('id', `steps-${this.elementId}`);
-        stepsGroup.setAttribute('stroke', 'white');
-        stepsGroup.setAttribute('stroke-width', '1');
+        const stepsGroup = this.createSvgElement('g', {
+            id: `steps-${this.elementId}`,
+            stroke: 'white',
+            'stroke-width': 1,
+        });
 
-        const handleCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        handleCircle.setAttribute('id', `handle-${this.elementId}`);
-        handleCircle.setAttribute('cx', this.cx);
-        handleCircle.setAttribute('cy', (this.cy - this.radius));
-        handleCircle.setAttribute('r', '12');
-        handleCircle.setAttribute('fill', 'white');
-        handleCircle.setAttribute('stroke', 'lightGrey');
-        handleCircle.setAttribute('stroke-width', '1');
+        const handleCircle = this.createSvgElement('circle', {
+            id: `handle-${this.elementId}`,
+            cx: this.cx,
+            cy: this.cy - this.radius,
+            r: this.strokeWidth / 2 + Math.round(this.strokeWidth * 0.1),
+            fill: 'white',
+            stroke: 'lightGrey',
+            'stroke-width': 1,
+        });
 
-        // Add Elements to SVG
+        // add elements to svg
         svg.appendChild(outerCircle);
         svg.appendChild(progressPath);
         svg.appendChild(stepsGroup);
@@ -107,36 +121,38 @@ class CircularSlider {
     }
 
     renderSteps() {
-        for (let i = 0; i < 50; i++) {
-            const radian = (i * 2 * Math.PI) / 50 - Math.PI / 2;
-            const innerX = this.cx + Math.cos(radian) * (this.radius - 10);
-            const innerY = this.cy + Math.sin(radian) * (this.radius - 10);
-            const outerX = this.cx + Math.cos(radian) * (this.radius + 10);
-            const outerY = this.cy + Math.sin(radian) * (this.radius + 10);
+        for (let i = 0; i < this.nOfSteps; i++) {
+            const radian = (i * 2 * Math.PI) / this.nOfSteps - Math.PI / 2;
+            const innerX = this.cx + Math.cos(radian) * (this.radius - this.strokeWidth / 2);
+            const innerY = this.cy + Math.sin(radian) * (this.radius - this.strokeWidth / 2);
+            const outerX = this.cx + Math.cos(radian) * (this.radius + this.strokeWidth / 2);
+            const outerY = this.cy + Math.sin(radian) * (this.radius + this.strokeWidth / 2);
 
-            const step = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            step.setAttribute('x1', innerX);
-            step.setAttribute('y1', innerY);
-            step.setAttribute('x2', outerX);
-            step.setAttribute('y2', outerY);
-            step.setAttribute('class', `line-${this.elementId}`);
+            const step = this.createSvgElement('line', {
+                x1: innerX,
+                y1: innerY,
+                x2: outerX,
+                y2: outerY,
+                class: `line-${this.elementId}`,
+            });
 
             const stepsGroup = document.getElementById(`steps-${this.elementId}`)
             stepsGroup.appendChild(step);
         }
     }
 
+    createSvgElement(type, attributes) {
+        const element = document.createElementNS('http://www.w3.org/2000/svg', type);
+        for (const key in attributes) {
+            element.setAttribute(key, attributes[key]);
+        }
+        return element;
+    }
+
     attachEventListeners() {
         this.parentSvg.addEventListener('mousedown', (e) => {
-            const rect = this.container.getBoundingClientRect();
-            const x = e.clientX - rect.left - this.cx;
-            const y = e.clientY - rect.top - this.cy;
-
-            const distance = Math.sqrt(x * x + y * y);
-            const isOnPath = distance >= this.radius - 10 && distance <= this.radius + 10;
-
-            if (isOnPath) {
-                this.isValid = true; //this is used to know if first click before dragging was on correct element
+            if (this.isOnPath(e)) {
+                this.isValid = true; // this is used to know if first click before dragging was on correct element
                 this.isMouseDown = true;
                 this.startAngle = this.calculateAngle(e);
                 this.updateProgress(e);
@@ -159,15 +175,9 @@ class CircularSlider {
             this.isValid = false;
         });
 
+        // touch events
         this.parentSvg.addEventListener('touchstart', e => {
-            const rect = this.container.getBoundingClientRect();
-            const x = e.changedTouches[0].clientX - rect.left - this.cx;
-            const y = e.changedTouches[0].clientY - rect.top - this.cy;
-
-            const distance = Math.sqrt(x * x + y * y);
-            const isOnPath = distance >= this.radius - 10 && distance <= this.radius + 10;
-
-            if (this.isEventOnSliderElement(e) && isOnPath) {
+            if (this.isOnPath(e, true)) {
                 this.isValid = true;
                 this.isMouseDown = true;
                 this.startAngle = this.calculateAngle(e);
@@ -238,27 +248,22 @@ class CircularSlider {
             currentAngle += 2 * Math.PI;
         }
 
+        // actual decimal value
         const val = this.min + currentAngle / (2 * Math.PI) * (this.max - this.min);
+
+        // value with step considered
         this.value = Math.round(val / this.step) * this.step;
         this.parentSvg.querySelector(`#value-${this.elementId}`).textContent = this.value;
     }
 
-    isEventOnSliderElement(e) {
-        return e.target.id === `handle-${this.elementId}` || (e.target.id === `outer-circle-${this.elementId}`) || e.target.id === `progress-${this.elementId}` || e.target.classList.contains(`line-${this.elementId}`);
+    // calculate if event happened on the slider path
+    isOnPath(e, isMobile = false) {
+        e = isMobile ? e.changedTouches[0] : e;
+        const rect = this.container.getBoundingClientRect();
+        const x = e.clientX - rect.left - this.cx;
+        const y = e.clientY - rect.top - this.cy;
+
+        const distance = Math.sqrt(x * x + y * y);
+        return distance >= this.radius - this.strokeWidth / 2 && distance <= this.radius + this.strokeWidth / 2;
     }
-
-    getMaxRadius() {
-        const sliders = this.parentSvg.querySelectorAll('.outer-circle');
-        let maxRadius = 0;
-
-        sliders.forEach(s => {
-            const radius = parseInt(s.getAttribute('r'));
-            if (radius > maxRadius) {
-                maxRadius = radius;
-            }
-        });
-
-        return maxRadius;
-    }
-
 }
