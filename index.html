@@ -10,15 +10,62 @@
 
 <body>
     <p>Circular slider</p>
-    <p>Value: <span id="val"></span> </p>
-    <svg id="circular-slider" width="220" height="220">
-        <circle cx="110" cy="110" r="80" stroke="lightGrey" stroke-width="20" fill="transparent" />
-        <path id="progress" d="" stroke="magenta" stroke-width="20" fill="transparent" />
-        <g id="steps" stroke="white" stroke-width="1">
-        </g>
-        <circle id="handle" cx="110" cy="30" r="13" fill="white" stroke="lightGrey" stroke-width="1" />
-    </svg>
-    <script src="slider.js"></script>
+    <div id="container" style="width: 1000px; height: 600px;"></div>
+
+    <script src="mySlider.js"></script>
+    <script>
+
+        const slider1 = new CircularSlider({
+            container: "container",
+            color: "#FFD1DC",
+            max: 100,
+            min: 0,
+            step: 10,
+            radius: 200,
+            title: "Food"
+        }).render();
+
+        const slider2 = new CircularSlider({
+            container: "container",
+            color: "#A2D2FF",
+            max: 100,
+            min: 0,
+            step: 10,
+            radius: 160,
+            title: "Car"
+        }).render();
+
+        const slider3 = new CircularSlider({
+            container: "container",
+            color: "#FFF49C",
+            max: 600,
+            min: 0,
+            step: 20,
+            radius: 120,
+            title: "Loans",
+        }).render();
+
+        const slider4 = new CircularSlider({
+            container: "container",
+            color: "#D5C0FF",
+            max: 600,
+            min: 0,
+            step: 20,
+            radius: 80,
+            title: "Insurance",
+            nOfSteps: 10,
+        }).render();
+
+        const slider5 = new CircularSlider({
+            container: "container",
+            color: "#CFFFB0",
+            max: 600,
+            min: 0,
+            step: 20,
+            radius: 40,
+            title: "Goods",
+        }).render();
+    </script>
 </body>
 
 </html>
